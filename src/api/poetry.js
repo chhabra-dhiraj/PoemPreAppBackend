@@ -1,7 +1,12 @@
 const express = require('express'),
     router = express.Router(),
+    bodyParser = require('body-parser'),
     ps = require('python-shell'),
     db = require('../controllers/poetry_queries');
+
+// Parse incoming requests data
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: false }));
 
 router.get("/poems", async function (req, res) {
 
