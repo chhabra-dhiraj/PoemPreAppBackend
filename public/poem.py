@@ -7,6 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1zYkIOfC0Zl7DT-aioNP8yP5jHyCUz5fG
 """
 import json
+import sys
 import pandas as pd
 import numpy as np
 import math
@@ -62,8 +63,13 @@ def comment_raiz(comment):
 
 poem_clear = comment_raiz(poem_break)
 
-key = "mouse"
-gen = 2
+key = sys.argv[1]
+genr = sys.argv[2].lower()
+if genr not in genre:
+    gen=0
+else:
+    gen=genre.index(genr.lower())
+
 
 cnt = Counter()
 for i in range(0,n):
@@ -75,10 +81,8 @@ for i in range(0,n):
                     cnt[poem_clear[i][k-1]] += 1
 
 d={}
-d['beforeResults']=[x[0] for x in cnt.most_common(30)]
+d['beforeWords']=[x[0] for x in cnt.most_common(30)]
 
-key = "might"
-gen = 0
 cnt = Counter()
 for i in range(0,n):
     if key in poem_clear[i] and i in genre_class[gen]:
@@ -87,7 +91,8 @@ for i in range(0,n):
             if poem_clear[i][k] == key:
                 if k < t-1:
                     cnt[poem_clear[i][k+1]] += 1
-                
-d['afterResults']=[x[0] for x in cnt.most_common(30)]
+
+
+d['afterWords']=[x[0] for x in cnt.most_common(30)]
 json_data=json.dumps(d)
 print(json_data)

@@ -32,8 +32,8 @@ router.get("/poems", async function (req, res) {
     });
 
     // res.status(200).json({
-    //     beforeResults: ["hello", "dhiraj", "how", "are", "you"],
-    //     afterResults: ["hi", "daman", "I", "am", "fine"]
+    //     beforeWords: ["hello", "dhiraj", "how", "are", "you"],
+    //     afterWords: ["hi", "daman", "I", "am", "fine"]
     // });
 });
 
