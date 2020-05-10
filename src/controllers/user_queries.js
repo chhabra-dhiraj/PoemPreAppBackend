@@ -12,11 +12,10 @@ router.use(
 )
 
 const getUserById = async (request, response) => {
-    const id = parseInt(request.params.id)
-    console.log(id)
 
     try {
-        const results = await pool.query('SELECT * FROM public."user" WHERE "userId" = $1', [parseInt(id, 10)])
+        const id = parseInt(request.params.id)
+        const results = await pool.query('SELECT * FROM public."user" WHERE "userId" = $1', [id])
         const user = results.rows[0]
         const poetries = await getPoetries(results.rows[0].userId)
 
@@ -27,8 +26,9 @@ const getUserById = async (request, response) => {
             userId: user.userId,
             poetries: poetries
         })
+
     } catch (e) {
-        throw e
+        response.status(400).send("Invalid Body!")
     }
 }
 
