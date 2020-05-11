@@ -11,7 +11,6 @@ router.use(bodyParser.urlencoded({ extended: false }));
 router.get("/poems", async function (req, res) {
 
     let options = {
-        pythonPath: "/usr/bin/python3",
         scriptPath: "public",
         args:
             [
