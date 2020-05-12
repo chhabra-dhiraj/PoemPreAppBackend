@@ -30,69 +30,98 @@ for i in range(0,n):
     else:
         genre_class[1].append(i)
 
-# print(genre_class[1])
-
 from collections import Counter
 import string
 
 import nltk
+nltk.download('punkt')
 
-poem = data[:]['content'].str.lower()
-poem = poem.values.tolist()
+poems = data[:]['content'].str.lower()
+poems = poems.values.tolist()
 
-poem_break = [nltk.tokenize.wordpunct_tokenize(text) for text in poem]
+index_sentences_dic = {}
+
+def tokenizePoems(poems):
+    for i in range(0,n):
+        poem_sentences = nltk.tokenize.sent_tokenize(poems[i])
+        index_sentences_dic[i] = poem_sentences
+
+tokenizePoems(poems)
 
 nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
-from nltk.stem.lancaster import LancasterStemmer
-stemmer = LancasterStemmer()
-punctuation = string.punctuation # '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+punctuation = string.punctuation # !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~
 # Add numbers
 punctuation += '0123456789'
 # print(punctuation)
-def comment_raiz(comment):
-    text = []
-    for lista in comment:
-        valids = []
-        for word in lista:
-            if word not in stopwords and word not in punctuation and len(word)>2:
-                valids.append(word)
-        text.append(valids)
-    return text
 
-poem_clear = comment_raiz(poem_break)
+sentence_words_dic = {}
 
-key = sys.argv[1]
-genr = sys.argv[2].lower()
+def filter_words(sentence_words):
+    valids = []
+    for word in sentence_words:
+        if word not in stopwords and word not in punctuation and len(word)>2:
+            valids.append(word)
+    return valids
+
+def tokenize_and_filter_sentences(sentence):
+    sentence_words = nltk.tokenize.wordpunct_tokenize(sentence)
+    sentence_filtered_words = filter_words(sentence_words)
+    sentence_words_dic[sentence] = sentence_filtered_words
+
+for poem_index in index_sentences_dic:
+        for sentence in index_sentences_dic[poem_index]:
+            tokenize_and_filter_sentences(sentence)
+
+genr = sys.argv[1]
+key = sys.argv[2].lower()
 if genr not in genre:
     gen=0
 else:
     gen=genre.index(genr.lower())
 
-
-cnt = Counter()
+matched_sentences = []
 for i in range(0,n):
-    if key in poem_clear[i] and i in genre_class[gen]:
-        t = len(poem_clear[i])
-        for k in range (0,t):
-            if poem_clear[i][k] == key:
-                if k > 0:
-                    cnt[poem_clear[i][k-1]] += 1
+    if i in genre_class[gen]:
+        for sentence in index_sentences_dic[i]:
+            if sentence in index_sentences_dic[i]:
+                for word in sentence_words_dic[sentence]:
+                    if word == key:
+                        author = data.iloc[i][0]
+                        name = data.iloc[i][2]
+                        age = data.iloc[i][3]
+                        matched_sentences.append({
+                            "author": author,
+                            "poemName": name,
+                            "age": age,
+                            "sentence": sentence
+                        })
 
-d={}
-d['beforeWords']=[x[0] for x in cnt.most_common(30)]
+# cnt = Counter()
+# for i in range(0,n):
+#     if key in poem_clear[i] and i in genre_class[gen]:
+#         t = len(poem_clear[i])
+#         for k in range (0,t):
+#             if poem_clear[i][k] == key:
+#                 if k > 0:
+#                     cnt[poem_clear[i][k-1]] += 1
 
-cnt = Counter()
-for i in range(0,n):
-    if key in poem_clear[i] and i in genre_class[gen]:
-        t = len(poem_clear[i])
-        for k in range (0,t):
-            if poem_clear[i][k] == key:
-                if k < t-1:
-                    cnt[poem_clear[i][k+1]] += 1
+# d={}
+# d['beforeWords']=[x[0] for x in cnt.most_common(5)]
+
+# cnt = Counter()
+# for i in range(0,n):
+#     if key in poem_clear[i] and i in genre_class[gen]:
+#         t = len(poem_clear[i])
+#         for k in range (0,t):
+#             if poem_clear[i][k] == key:
+#                 if k < t-1:
+#                     cnt[poem_clear[i][k+1]] += 1
 
 
-d['afterWords']=[x[0] for x in cnt.most_common(30)]
-json_data=json.dumps(d)
+# d['afterWords']=[x[0] for x in cnt.most_common(5)]
+results = {}
+results["sentencesList"] = matched_sentences
+json_data=json.dumps(results)
 print(json_data)

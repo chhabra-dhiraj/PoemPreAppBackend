@@ -23,9 +23,10 @@ router.get("/poems", async function (req, res) {
     console.log(req.query.genre);
 
     ps.PythonShell.run('poem.py', options, async function (err, data) {
+        console.log(data)
         if (err) throw err;
         let jsonString = JSON.parse(data);
-        console.log(data);
+        // console.log(data);
         console.log(jsonString);
         res.status(200).json(jsonString);
     });
