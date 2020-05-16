@@ -1,5 +1,7 @@
 const express = require('express'),
     bodyParser = require('body-parser'),
+    uuid = require('uuid'),
+    passport = require('passport'),
     path = require('path');
 
 // Set up the express app
@@ -12,6 +14,8 @@ app.use('/', express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(require('./middlewares/authentication_middlewares/session'))
+  
 // Setting up the api routes
 app.use(require('./api/index'));
 

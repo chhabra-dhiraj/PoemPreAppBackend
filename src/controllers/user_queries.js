@@ -3,6 +3,8 @@ const pool = require("../../postgresconfig");
 const express = require('express')
 const bodyParser = require('body-parser')
 const router = express.Router()
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 router.use(bodyParser.json())
 router.use(
@@ -38,25 +40,38 @@ const getPoetries = async (userId) => {
     return poetries.rows
 }
 
-const createUser = async (request, response) => {
-    const {firebaseId, name, email, imageUrl} = request.body
-    console.log(imageUrl)
+const createUser = async (request) => {
 
-    const results = await pool.query('SELECT * FROM public."user" WHERE "firebaseId" = $1', [firebaseId])
+    const {email, firstname, lastname, password, imageUrl} = request.body
+    console.log(email)
+
+    const results = await pool.query('SELECT * FROM public."user" WHERE "email" = $1', [email])
     user = results.rows[0]
 
     if (!user) {
-        pool.query('INSERT INTO public."user" ("name", "email", "imageUrl", "firebaseId") VALUES ($1, $2, $3, $4) RETURNING *', [name, email, imageUrl, firebaseId], (error, results) => {
-            if (error) {
-                throw error
+        bcrypt.hash(password, saltRounds, (err, hash) => {
+            console.log("hash:- ")
+            if(err) {
+                console.log(err)
+                throw err
             }
 
-            console.log(results)
+            // Now we can store the password hash in db.
+            const hashedPassword = hash
+            console.log(hash)
 
-            response.status(200).json(`${results.rows[0].userId}`)
-        })
-    } else {
-        response.status(200).json(user.userId)
+            pool.query('INSERT INTO public."user" ("email", "firstname", "lastname", "password", "imageUrl") VALUES ($1, $2, $3, $4, $5) RETURNING *', [email, firstname, lastname, hashedPassword, imageUrl], (error, results) => {
+                if (error) {
+                    console.log(error)
+                    return null
+                }
+    
+                console.log(results)
+    
+                return results.rows[0].userId
+            })
+        });
+
     }
 }
 
