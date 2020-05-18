@@ -98,30 +98,9 @@ for i in range(0,n):
                             "sentence": sentence
                         })
 
-# cnt = Counter()
-# for i in range(0,n):
-#     if key in poem_clear[i] and i in genre_class[gen]:
-#         t = len(poem_clear[i])
-#         for k in range (0,t):
-#             if poem_clear[i][k] == key:
-#                 if k > 0:
-#                     cnt[poem_clear[i][k-1]] += 1
-
-# d={}
-# d['beforeWords']=[x[0] for x in cnt.most_common(5)]
-
-# cnt = Counter()
-# for i in range(0,n):
-#     if key in poem_clear[i] and i in genre_class[gen]:
-#         t = len(poem_clear[i])
-#         for k in range (0,t):
-#             if poem_clear[i][k] == key:
-#                 if k < t-1:
-#                     cnt[poem_clear[i][k+1]] += 1
-
-
-# d['afterWords']=[x[0] for x in cnt.most_common(5)]
 results = {}
+results["isSuccesfull"] = True
+results["message"] = "Successfully searched poems"
 results["sentencesList"] = matched_sentences
 json_data=json.dumps(results)
 print(json_data)
