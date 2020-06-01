@@ -1,8 +1,8 @@
-*.idea
-*.log
+.idea
+.log
 npm-debug.log*
 node_modules
 .env
 postgresconfig.js
 keys.js
-.sessions
+sessions
