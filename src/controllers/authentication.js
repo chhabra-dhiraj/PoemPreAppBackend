@@ -20,22 +20,22 @@ const checkEmailPresent = async (request, response) => {
         const user = results.rows[0]
 
         if (!user) {
-            response.status(200).json({
-                emailPresent: false
-            })
+            response.status(200).send(false)
         } else {
-            response.status(200).json({
-                emailPresent: true
-            })
+            response.status(200).send(true)
         }
 
     } catch (e) {
-        response.status(500).send("Internal Server Error")
+        response.status(500).send(false)
     }
 }
 
 const login = (req, res, next) => {
-    res.status(200).send("Authenticated")
+    res.status(200).json({
+        sessionId: req.sessionId,
+        user: req.user,
+        message: 'Login Successful'
+    })
 }
 
 const register = async (req, res, next) => {
@@ -60,7 +60,9 @@ const register = async (req, res, next) => {
                         res.status(201).json({
                             isSuccessfull: true,
                             isLoginSuccessFull: true,
-                            message: 'User successfully registered and authenticated'
+                            message: 'User successfully registered and authenticated',
+                            sessionId: req.sessionId,
+                            user: req.user,
                         })
                     }
                 });
@@ -204,16 +206,12 @@ const changePass = (req, res) => {
 }
 
 const logout = (req, res) => {
-    if (req.isAuthenticated()) {
+    // if (req.isAuthenticated()) {
         req.logout()
-        res.status(200).json({
-            message: 'Successfully logged out'
-        })
-    } else {
-        res.status(401).json({
-            message: "No user logged in"
-        })
-    }
+        res.status(200).send('Successfully logged out')
+    // } else {
+    //     res.status(401).send("No user logged in")
+    // }
 }
 
 const validatePassword = (password) => {

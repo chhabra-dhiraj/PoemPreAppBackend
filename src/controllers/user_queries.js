@@ -3,27 +3,31 @@ const pool = require("../../postgresconfig"),
     saltRounds = 10;
 
 const getUserById = async (req, res) => {
-    if (req.isAuthenticated()) {
+    // if (req.isAuthenticated()) {
         try {
             const id = req.user.userId
             const results = await pool.query('SELECT * FROM public."user" WHERE "userId" = $1', [id])
             const user = results.rows[0]
             const poetries = await getPoetries(results.rows[0].userId)
             res.status(200).json({
-                userId: user.userId,
-                email: user.email,
-                firstname: user.firstname,
-                lastname: user.lastname,
-                imageUrl: user.imageUrl,
-                poetries: poetries
+                isSuccessfull: true,
+                message: "Request Successful",
+                user: user,
+                poems: poetries
             })
 
         } catch (e) {
-            res.status(500).send("Server Error")
+            res.status(500).json({
+                isSuccessfull: false,
+                message: 'Server Error'
+            })
         }
-    } else {
-        res.status(401).send('User is not logged in')
-    }
+    // } else {
+    //     res.status(401).json({
+    //         isSuccessfull: false,
+    //         message: 'User not logged in'
+    //     })
+    // }
 }
 
 const getPoetries = async (userId) => {
@@ -33,22 +37,22 @@ const getPoetries = async (userId) => {
 }
 
 const updateUser = async (req, res) => {
-    if (req.isAuthenticated()) {
+    // if (req.isAuthenticated()) {
         try {
             const id = req.user.userId
-            const { email, firstname, lastname, imageUrl, password } = req.body
+            const { email, firstname, lastname, imageUrl } = req.body
             const results = await pool.query('SELECT * FROM public."user" WHERE "email" = $1', [email])
             const user = results.rows[0]
-            const hash = await bcrypt.hash(password, saltRounds)
             if (!user) {
 
-                const results = await pool.query('UPDATE public."user" SET "email"=$1, "firstname"=$2, "lastname"=$3, "imageUrl"=$4, "password"=$5 WHERE "userId" = $6 returning *'
-                    , [email, firstname, lastname, imageUrl, hash, id])
+                const results = await pool.query('UPDATE public."user" SET "email"=$1, "firstname"=$2, "lastname"=$3, "imageUrl"=$4 WHERE "userId" = $5 returning *'
+                    , [email, firstname, lastname, imageUrl, id])
 
                 if (results.rows[0]) {
                     res.status(200).json({
                         isSuccessfull: true,
-                        message: "Successfully updated user data"
+                        message: "Successfully updated user data",
+                        user: req.user,
                     })
                 }
             } else {
@@ -58,7 +62,8 @@ const updateUser = async (req, res) => {
                 if (results.rows[0]) {
                     res.status(200).json({
                         isSuccessfull: true,
-                        message: "Successfully updated user data except email as user with same email present"
+                        message: "Successfully updated user data except email as user with same email present",
+                        user: req.user,
                     })
                 }
             }
@@ -68,13 +73,16 @@ const updateUser = async (req, res) => {
                 message: "Server Error"
             })
         }
-    } else {
-        res.status(401).send('User is not logged in')
-    }
+    // } else {
+    //     res.status(401).json({
+    //         isSuccessfull: false,
+    //         message: "User not logged in"
+    //     })
+    // }
 }
 
 const deleteUser = async (req, res) => {
-    if (req.isAuthenticated()) {
+    // if (req.isAuthenticated()) {
         const id = req.user.userId
 
         pool.query('DELETE FROM public."user" WHERE "userId" = $1', [id], (error, results) => {
@@ -90,9 +98,12 @@ const deleteUser = async (req, res) => {
                 message: 'User successfully deleted and logged out'
             })
         })
-    } else {
-        res.status(401).send('User is not logged in')
-    }
+    // } else {
+    //     res.status(401).json({
+    //         isSuccessfull: false,
+    //         message: "User not logged in"
+    //     })
+    // }
 }
 
 module.exports = {

@@ -4,7 +4,7 @@ const express = require('express'),
     db = require('../controllers/poetry_queries');
 
 router.get("/poems", async function (req, res) {
-    if (req.isAuthenticated) {
+    // if (req.isAuthenticated) {
 
         let options = {
             scriptPath: "public",
@@ -18,6 +18,7 @@ router.get("/poems", async function (req, res) {
         console.log(req.query.word);
         console.log(req.query.genre);
 
+
         ps.PythonShell.run('poem.py', options, async function (err, data) {
             console.log(data)
             if (err) {
@@ -28,13 +29,18 @@ router.get("/poems", async function (req, res) {
                 return
             };
             let jsonString = JSON.parse(data);
-            // console.log(data);
-            console.log(jsonString);
-            res.status(200).json(jsonString);
+            // console.log(jsonString);
+            res.status(200).json(
+                jsonString
+            );
         });
-    } else {
-        res.status(401).send('User is not logged in')
-    }
+
+    // } else {
+    //     res.status(401).json({
+    //         isSuccessfull: false,
+    //         message: 'User not logged in'
+    //     })
+    // }
 });
 
 router.post('/poetries', db.createPoetries)

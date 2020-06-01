@@ -74,8 +74,8 @@ for poem_index in index_sentences_dic:
         for sentence in index_sentences_dic[poem_index]:
             tokenize_and_filter_sentences(sentence)
 
-genr = sys.argv[1]
-key = sys.argv[2].lower()
+key = sys.argv[1]
+genr = sys.argv[2].lower()
 if genr not in genre:
     gen=0
 else:
@@ -98,9 +98,13 @@ for i in range(0,n):
                             "sentence": sentence
                         })
 
-results = {}
-results["isSuccesfull"] = True
-results["message"] = "Successfully searched poems"
-results["sentencesList"] = matched_sentences
+results = {
+    "isSuccessful": True,
+"message": "Successfully searched poems",
+"sentencesList": matched_sentences
+}
+# results["isSuccesfull"] = True
+# results["message"] = "Successfully searched poems"
+# results["sentencesList"] = matched_sentences
 json_data=json.dumps(results)
 print(json_data)
