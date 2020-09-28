@@ -16,6 +16,8 @@ const checkEmailPresent = async (request, response) => {
 
         const { email } = request.body
 
+        console.log(`email = ${email}`);
+
         const results = await pool.query('SELECT * FROM public."user" WHERE "email" = $1', [email])
         const user = results.rows[0]
 
@@ -31,8 +33,10 @@ const checkEmailPresent = async (request, response) => {
 }
 
 const login = (req, res, next) => {
+    console.log(req.sessionID)
+    console.log(req.user)
     res.status(200).json({
-        sessionId: req.sessionId,
+        sessionId: req.sessionID,
         user: req.user,
         message: 'Login Successful'
     })
@@ -49,6 +53,7 @@ const register = async (req, res, next) => {
         if (!user) {
             const result = await doRegistration(email, firstname, lastname, imageUrl, password)
             if (result.isSuccessfull) {
+                
                 req.login(result.user, (err) => {
                     if (err) {
                         res.status(401).json({
@@ -61,7 +66,7 @@ const register = async (req, res, next) => {
                             isSuccessfull: true,
                             isLoginSuccessFull: true,
                             message: 'User successfully registered and authenticated',
-                            sessionId: req.sessionId,
+                            sessionId: req.sessionID,
                             user: req.user,
                         })
                     }
@@ -208,7 +213,9 @@ const changePass = (req, res) => {
 const logout = (req, res) => {
     // if (req.isAuthenticated()) {
         req.logout()
-        res.status(200).send('Successfully logged out')
+        res.status(200).json({
+            message: 'Successfully logged out'
+        })
     // } else {
     //     res.status(401).send("No user logged in")
     // }
