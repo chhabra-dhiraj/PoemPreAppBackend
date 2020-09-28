@@ -2,11 +2,12 @@ const pool = require("../../postgresconfig");
 
 const createPoetries = (req, res) => {
     // if (req.isAuthenticated()) {
-        const userId = parseInt(req.query.userId, 10);
+        const userId = req.session.passport.user
         const { title, genre, body } = req.body
 
         pool.query('INSERT INTO public."poetry" ("title", "genre", "body", "userId") VALUES ($1, $2, $3, $4) RETURNING *', [title, genre, body, userId], (error, results) => {
             if (error) {
+                console.log("hi error" + error)
                 res.status(500).json({
                     isSuccessfull: false,
                     message: 'Server Error'

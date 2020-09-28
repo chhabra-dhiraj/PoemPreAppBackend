@@ -4,7 +4,9 @@ const pool = require("../../postgresconfig"),
 
 const getUserById = async (req, res) => {
     // if (req.isAuthenticated()) {
+        console.log(`hi dhiraj: ${req.isAuthenticated()}`)
         try {
+            console.log(req.user.userId)
             const id = req.user.userId
             const results = await pool.query('SELECT * FROM public."user" WHERE "userId" = $1', [id])
             const user = results.rows[0]

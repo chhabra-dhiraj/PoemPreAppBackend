@@ -33,8 +33,6 @@ const checkEmailPresent = async (request, response) => {
 }
 
 const login = (req, res, next) => {
-    console.log(req.sessionID)
-    console.log(req.user)
     res.status(200).json({
         sessionId: req.sessionID,
         user: req.user,
