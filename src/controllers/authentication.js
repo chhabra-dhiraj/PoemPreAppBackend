@@ -16,8 +16,6 @@ const checkEmailPresent = async (request, response) => {
 
         const { email } = request.body
 
-        console.log(`email = ${email}`);
-
         const results = await pool.query('SELECT * FROM public."user" WHERE "email" = $1', [email])
         const user = results.rows[0]
 
