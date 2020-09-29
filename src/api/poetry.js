@@ -20,8 +20,8 @@ router.get("/poems", async function (req, res) {
 
 
         ps.PythonShell.run('poem.py', options, async function (err, data) {
-            console.log(data)
             if (err) {
+                console.log(err)
                 res.status(500).json({
                     isSuccessfull: false,
                     message: 'Server Error'
