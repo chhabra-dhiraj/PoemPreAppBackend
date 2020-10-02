@@ -207,14 +207,14 @@ const changePass = (req, res) => {
 }
 
 const logout = (req, res) => {
-    // if (req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
         req.logout()
         res.status(200).json({
             message: 'Successfully logged out'
         })
-    // } else {
-    //     res.status(401).send("No user logged in")
-    // }
+    } else {
+        res.status(401).send("No user logged in")
+    }
 }
 
 const validatePassword = (password) => {
