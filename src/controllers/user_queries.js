@@ -3,7 +3,7 @@ const pool = require("../../postgresconfig"),
     saltRounds = 10;
 
 const getUserById = async (req, res) => {
-    // if (req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
     try {
         const id = req.user.userId
         const results = await pool.query('SELECT * FROM public."user" WHERE "userId" = $1', [id])
@@ -22,12 +22,12 @@ const getUserById = async (req, res) => {
             message: 'Server Error'
         })
     }
-    // } else {
-    //     res.status(401).json({
-    //         isSuccessfull: false,
-    //         message: 'User not logged in'
-    //     })
-    // }
+    } else {
+        res.status(401).json({
+            isSuccessfull: false,
+            message: 'User not logged in'
+        })
+    }
 }
 
 const getPoetries = async (userId) => {
@@ -37,7 +37,7 @@ const getPoetries = async (userId) => {
 }
 
 const updateUser = async (req, res) => {
-    // if (req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
     try {
         const id = req.user.userId
         const { email, firstname, lastname, imageUrl } = req.body
@@ -75,16 +75,16 @@ const updateUser = async (req, res) => {
             message: "Server Error"
         })
     }
-    // } else {
-    //     res.status(401).json({
-    //         isSuccessfull: false,
-    //         message: "User not logged in"
-    //     })
-    // }
+    } else {
+        res.status(401).json({
+            isSuccessfull: false,
+            message: "User not logged in"
+        })
+    }
 }
 
 const deleteUser = async (req, res) => {
-    // if (req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
     try {
         const id = req.user.userId
         pool.query('DELETE FROM public."poetry" WHERE "userId" = $1', [id])
@@ -110,12 +110,12 @@ const deleteUser = async (req, res) => {
             message: "Server Error"
         })
     }
-    // } else {
-    //     res.status(401).json({
-    //         isSuccessfull: false,
-    //         message: "User not logged in"
-    //     })
-    // }
+    } else {
+        res.status(401).json({
+            isSuccessfull: false,
+            message: "User not logged in"
+        })
+    }
 }
 
 module.exports = {

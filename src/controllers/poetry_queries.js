@@ -1,7 +1,7 @@
 const pool = require("../../postgresconfig");
 
 const createPoetries = (req, res) => {
-    // if (req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
         const userId = req.session.passport.user
         const { title, genre, body } = req.body
 
@@ -20,16 +20,16 @@ const createPoetries = (req, res) => {
                 message: 'Successfully created poetry'
             })
         })
-    // } else {
-    //     res.status(401).json({
-    //         isSuccessfull: false,
-    //         message: 'User not logged in'
-    //     })
-    // }
+    } else {
+        res.status(401).json({
+            isSuccessfull: false,
+            message: 'User not logged in'
+        })
+    }
 }
 
 const updatePoetry = (req, res) => {
-    // if (req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
         const id = parseInt(req.params.id, 10)
         const { title, genre, body } = req.body
 
@@ -49,16 +49,16 @@ const updatePoetry = (req, res) => {
                 })
             }
         )
-    // } else {
-    //     res.status(401).json({
-    //         isSuccessfull: false,
-    //         message: 'User not logged in'
-    //     })
-    // }
+    } else {
+        res.status(401).json({
+            isSuccessfull: false,
+            message: 'User not logged in'
+        })
+    }
 }
 
 const deletePoetry = (req, res) => {
-    // if (req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
         const id = parseInt(req.params.id, 10)
 
         pool.query('DELETE FROM public."poetry" WHERE "poetryId" = $1', [id], (error, results) => {
@@ -74,12 +74,12 @@ const deletePoetry = (req, res) => {
                 message: 'Successfully deleted poetry'
             })
         })
-    // } else {
-    //     res.status(401).json({
-    //         isSuccessfull: false,
-    //         message: 'User not logged in'
-    //     })
-    // }
+    } else {
+        res.status(401).json({
+            isSuccessfull: false,
+            message: 'User not logged in'
+        })
+    }
 }
 
 module.exports = {
